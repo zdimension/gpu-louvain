@@ -15,9 +15,8 @@ host_structures readInputData(char *fileName) {
 		std::getline(file, s);
 	} while (s[0] == '%');
 	std::istringstream stream(s);
-    stream >> V >> V >> E;
+    stream >> V >> E;
     int v1, v2;
-    float w;
     host_structures hostStructures;
 	hostStructures.originalV = V;
 	hostStructures.V = V;
@@ -30,7 +29,8 @@ host_structures readInputData(char *fileName) {
     // TODO: here is assumption that graph is undirected
     int aux = E;
     for (int i = 0; i < aux; i++) {
-        file >> v1 >> v2 >> w;
+        file >> v1 >> v2;
+	const float w = 1.0;
         v1--;
         v2--;
 		hostStructures.communityWeight[v1] += w;
