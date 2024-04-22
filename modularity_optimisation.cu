@@ -1,6 +1,7 @@
 #include "modularity_optimisation.cuh"
 #include <thrust/partition.h>
 #include <vector>
+#include <fstream>
 
 /**
  * Computes hashing (using double hashing) for open-addressing purposes of arrays in prepareHashArrays function.
@@ -401,20 +402,26 @@ float calculateModularity(int V, float M, device_structures deviceStructures) {
 }
 
 void printOriginalToCommunity(device_structures& deviceStructures, host_structures& hostStructures) {
-	std::vector<int> communityToVector[hostStructures.V];
+	//std::vector<int> communityToVector[hostStructures.V];
 	HANDLE_ERROR(cudaMemcpy(hostStructures.originalToCommunity, deviceStructures.originalToCommunity,
 			hostStructures.originalV * sizeof(int), cudaMemcpyDeviceToHost));
+	std::vector<int16_t> vdata(hostStructures.originalV);
 	for (int vector = 0; vector < hostStructures.originalV; vector++) {
 		int community = hostStructures.originalToCommunity[vector];
-		communityToVector[community].emplace_back(vector);
+		vdata[vector] = community;
+		//communityToVector[community].emplace_back(vector);
 	}
-	printf("%d\n", hostStructures.V);
+	std::ofstream ofile("comms.bin", std::ios::out | std::ios::binary);
+	int16_t n_comm = hostStructures.V;
+	ofile.write((char*)&n_comm, sizeof(n_comm));
+	ofile.write((char*)&vdata[0], vdata.size() * sizeof(int16_t));
+	/*printf("%d\n", hostStructures.V);
 	for (int community = 0; community < hostStructures.V; community++) {
 		printf("%d", community + 1);
 		for (int i = 0; i < communityToVector[community].size(); i++)
 			printf(" %d", communityToVector[community][i] + 1);
 		printf("\n");
-	}
+	}*/
 }
 
 void initM(host_structures& hostStructures) {

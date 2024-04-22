@@ -31,8 +31,8 @@ host_structures readInputData(char *fileName) {
     for (int i = 0; i < aux; i++) {
         file >> v1 >> v2;
 	const float w = 1.0;
-        v1--;
-        v2--;
+        //v1--;
+        //v2--;
 		hostStructures.communityWeight[v1] += w;
         neighbours[v1].emplace_back(v2, w);
         if (v1 != v2) {
