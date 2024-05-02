@@ -259,12 +259,13 @@ void aggregateCommunities(device_structures &deviceStructures, host_structures &
 		*newEdges = aggregationPhaseStructures.newEdges;
 	float *newWeights = aggregationPhaseStructures.newWeights;
 
-	int vertices[V];
+	int* vertices = new int[V];
 	for (int i = 0; i < V; i++)
 		vertices[i] = i;
 	int *deviceVertices;
 	HANDLE_ERROR(cudaMalloc((void**)&deviceVertices, V * sizeof(int)));
 	HANDLE_ERROR(cudaMemcpy(deviceVertices, vertices, V * sizeof(int), cudaMemcpyHostToDevice));
+	delete[] vertices;
 
 	thrust::fill(thrust::device, newID, newID + V, 0);
 	thrust::fill(thrust::device, deviceStructures.communitySize, deviceStructures.communitySize + V, 0);
